@@ -81,7 +81,7 @@
 
 {
 \usebackgroundtemplate{%
-\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{miner2.jpg}};}
+\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{miner2.jpg}};}
 \begin{frame}{Сложности}
 \begin{mybox}[]
 \begin{itemize}
@@ -101,7 +101,7 @@
 \begin{itemize}
 	\item Создать модели используемых библиотек
 	\item Модель - частная спецификация, описывающая внешнее поведение библиотеки
-	\item Проанализировать модели, найти 
+	\item Проанализировать модели, рассчитать для них изменения
 	\item Преобразовать изменения обратно в код
 \end{itemize}
 \end{mybox}
@@ -115,11 +115,11 @@
 
 {
 \usebackgroundtemplate{%
-\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{plan.jpg}};}
+\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
 \begin{frame}{Спецификация библиотек}
 \begin{mybox}[]
 	Уже есть языки для описания библиотек (например, IDL для RPC), но они не содержат семантическую информацию.
-	Разрабатываемая модель библиотеки должна:
+	Модель библиотеки должна:
 \begin{itemize}
 	\item Детально описывать внешний интерфейс библиотеки;
 	\item Задавать возможные протоколы использования библиотеки;
@@ -130,6 +130,9 @@
 \end{frame}
 }
 
+{
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
 \begin{frame}[fragile]{Формализм}
   \begin{mybox}[]
   \begin{itemize}
@@ -144,6 +147,57 @@
   \end{itemize}
   \end{mybox}
 \end{frame}
+}
+
+{
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
+\begin{frame}[fragile]{Формализм}
+  \begin{mybox}[]
+  Для описания моделей используется набор расширенных конечных автоматов:
+  \begin{itemize}
+  	\item L – основной расширенный конечный автомат, описывающий поведение всей библиотеки;
+  	\item Si – i-ый дочерний расширенный конечный автомат, запускаемый при достижении определенных условий;
+  \end{itemize}
+  \end{mybox}
+\end{frame}
+}
+
+{
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
+\begin{frame}[fragile]{Формализм}
+  \begin{mybox}[]
+  Дочерний конечный автомат:
+  
+	$A = <Q, Q_0, X, V, C, T>$
+	
+	C - множество стимулов (например, вызовов функций), $С_i$ – появление i-ой стимула
+	
+	$C_i^A$ - множество семантических действий, инициируемых запуском функции при условии истинности $C_i^{CondA}$
+	
+	$C_i^D$ - множество дочерних автоматов, описывающих сущности и их экземпляры (создаются при истинном $C_i^{CondD}$)
+  \end{mybox}
+\end{frame}
+}
+
+{
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
+\begin{frame}[fragile]{Формализм}
+  \begin{mybox}[]
+  Дочерний конечный автомат:
+  
+	$A = <Q, Q_0, X, V, C, T>$
+	
+	C - множество стимулов (например, вызовов функций), $С_i$ – появление i-ой стимула
+	
+	$C_i^A$ - множество семантических действий, инициируемых запуском функции при условии истинности $C_i^{CondA}$
+	
+	$C_i^D$ - множество дочерних автоматов, запускаемых функцией при условии $C_i^{CondD}$;
+  \end{mybox}
+\end{frame}
+}
 
 % \section{Titleformats}
 
@@ -155,6 +209,9 @@
 	\includegraphics[width=\textwidth]{extracted_java.pdf}
 \end{frame}
 
+{
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{links.jpg}};}
 \begin{frame}[fragile]{Извлечение информации из кода}
   \begin{mybox}[]
   \begin{itemize}
@@ -163,8 +220,11 @@
   \end{itemize}
   \end{mybox}
 \end{frame}
+}
 
-
+{
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{links.jpg}};}
 \begin{frame}[fragile]{Извлечение информации из кода}
 	\begin{mybox}[]
 		\begin{itemize}
@@ -175,22 +235,54 @@
 		\end{itemize}
 	\end{mybox}
 \end{frame}
+}
 
-
+{
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{chain.jpg}};}
 \begin{frame}[fragile]{Поиск соответствия между моделями}
   \begin{mybox}[]
-  \begin{itemize}
   	\item При переносе необходимо сохранить:
   	  \begin{itemize}
   	  	\item Набор действий, совершенных над библиотекой
   	  	\item Зависимости по данным
   	  \end{itemize}
-  	\item Первые версии инструмента: модель преобразуется в граф, с помощью алгоритма Дейкстры ищем кратчайший путь между вершинами
-  	\item Сейчас: используется волновой алгоритм, в поисках более эффективных алгоритмов
+  \end{mybox}
+\end{frame}
+}
+
+{
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{chain.jpg}};}
+\begin{frame}[fragile]{Поиск соответствия между моделями}
+  \begin{mybox}[]
+  \begin{itemize}
+  	\item Модель переводится в граф и задача сводится к поиску кратчайшего пути на графе
+  	\item Первые версии инструмента: использовался алгоритм Дейкстры. Недостаток подхода: не все связи можно представить с помощью графа
+  	\item Сейчас: используется модификация волнового алгоритма
+  	\item В поисках более оптимального подхода
   \end{itemize}
   \end{mybox}
 \end{frame}
+}
 
+{
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{chain.jpg}};}
+\begin{frame}[fragile]{Поиск соответствия между моделями}
+  \begin{mybox}[]
+  Зависимости по данным:
+  \begin{itemize}
+    \item Сущности, которые необходимы для осуществления перехода (например, аргументы функции), отмечены в модели специальными связями
+  	\item Если для перехода требуется сущность, которая отсутствует в текущем контексте, ищем способ создания этой сущности
+  \end{itemize}
+  \end{mybox}
+\end{frame}
+}
+
+{
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{todolist.jpg}};}
 \begin{frame}[fragile]{Текущее состояние}
   \begin{mybox}[]
   \begin{itemize}
@@ -201,6 +293,7 @@
   \end{itemize}
   \end{mybox}
 \end{frame}
+}
 
 \begin{frame}[fragile]{Пример миграции}
 До:
@@ -233,15 +326,19 @@ if (linkedEdge_ContentLength_1 > 0) {
 \end{lstlisting}
 \end{frame}
 
+{
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{todolist.jpg}};}
 \begin{frame}[fragile]{Дальнейшее развитие}
 	\begin{mybox}[]
-		\begin{itemize}
-			\item Улучшение алгоритма поиска соответствия, повышение производительности + увеличение возможностей
-			\item Проектирование языка для описания моделей (сейчас это ad-hoc решение)
-			\item Поиск способа задания соответствия между семантическими доменами
-			\item Увеличение количества информации, содержащейся в моделях
-		\end{itemize}
+	\begin{itemize}
+		\item Улучшение алгоритма поиска соответствия, повышение производительности + увеличение возможностей
+		\item Проектирование языка для описания моделей (сейчас это ad-hoc решение)
+		\item Поиск способа задания соответствия между семантическими доменами
+		\item Увеличение количества информации, содержащейся в моделях
+	\end{itemize}
 	\end{mybox}
 \end{frame}
+}
 
 \end{document}
