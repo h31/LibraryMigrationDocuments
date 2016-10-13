@@ -1,6 +1,6 @@
 \documentclass[12pt]{beamer}
 
-\usepackage{cmap}
+% \usepackage{cmap}
 \usepackage[english, russian]{babel}
 
 \usetheme{metropolis}
@@ -100,7 +100,7 @@
 \begin{mybox}[]
 \begin{itemize}
 	\item Создать модели используемых библиотек
-	\item Модель - частная спецификация, описывающая внешнее поведение библиотеки
+	\item Модель - частичная спецификация, описывающая внешнее поведение библиотеки
 	\item Проанализировать модели, рассчитать для них изменения
 	\item Преобразовать изменения обратно в код
 \end{itemize}
@@ -108,7 +108,7 @@
 
 \metroset{block=fill}
 \begin{alertblock}{Почему модели, а не сам код?}
-Удобнее анализировать декларативные модели, чем императивный код
+Декларативные модели анализировать удобнее, чем императивный код
 \end{alertblock}
 \end{frame}
 }
@@ -118,13 +118,12 @@
 \tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
 \begin{frame}{Спецификация библиотек}
 \begin{mybox}[]
-	Уже есть языки для описания библиотек (например, IDL для RPC), но они не содержат семантическую информацию.
+	Уже есть языки для описания библиотек (например, IDL для RPC), но они не позволяют выразить семантическую информацию.
 	Модель библиотеки должна:
 \begin{itemize}
-	\item Детально описывать внешний интерфейс библиотеки;
+	\item Детально описывать внешний интерфейс библиотеки
 	\item Задавать возможные протоколы использования библиотеки;
 	\item Специфицировать побочные действия библиотеки – влияние ее на окружение;
-	\item Явно вводить семантические описания поведения библиотек.
 \end{itemize}
 \end{mybox}
 \end{frame}
@@ -133,31 +132,12 @@
 {
 \usebackgroundtemplate{%
 \tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
-\begin{frame}[fragile]{Формализм}
-  \begin{mybox}[]
-  \begin{itemize}
-  	\item Для описания моделей используются расширенные конечные автоматы:
-  	$A = <Q, Q_0, X, V, C, T>$
-  	
-  	C - множество стимулов (например, вызовов функций), $С_i$ – появление i-ой стимула
-  	
-  	$C_i^A$ - множество семантических действий, инициируемых запуском функции при условии истинности $C_i^{CondA}$
-  	
-  	$C_i^D$ - множество дочерних автоматов, запускаемых функцией при условии $C_i^{CondD}$;
-  \end{itemize}
-  \end{mybox}
-\end{frame}
-}
-
-{
-\usebackgroundtemplate{%
-\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
-\begin{frame}[fragile]{Формализм}
+\begin{frame}{Формализм}
   \begin{mybox}[]
   Для описания моделей используется набор расширенных конечных автоматов:
   \begin{itemize}
-  	\item L – основной расширенный конечный автомат, описывающий поведение всей библиотеки;
-  	\item Si – i-ый дочерний расширенный конечный автомат, запускаемый при достижении определенных условий;
+  	\item $L$ – основной расширенный конечный автомат, описывающий поведение всей библиотеки
+  	\item $S_i$ – i-ый дочерний расширенный конечный автомат, запускаемый при достижении определенных условий
   \end{itemize}
   \end{mybox}
 \end{frame}
@@ -166,35 +146,19 @@
 {
 \usebackgroundtemplate{%
 \tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
-\begin{frame}[fragile]{Формализм}
+\begin{frame}{Формализм}
   \begin{mybox}[]
   Дочерний конечный автомат:
   
 	$A = <Q, Q_0, X, V, C, T>$
 	
-	C - множество стимулов (например, вызовов функций), $С_i$ – появление i-ой стимула
+	C - множество стимулов (например, вызовов функций), $C_i$ – появление i-ой стимула
+	
+	$X$ - набор атрибутов этого автомата
 	
 	$C_i^A$ - множество семантических действий, инициируемых запуском функции при условии истинности $C_i^{CondA}$
 	
 	$C_i^D$ - множество дочерних автоматов, описывающих сущности и их экземпляры (создаются при истинном $C_i^{CondD}$)
-  \end{mybox}
-\end{frame}
-}
-
-{
-\usebackgroundtemplate{%
-\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
-\begin{frame}[fragile]{Формализм}
-  \begin{mybox}[]
-  Дочерний конечный автомат:
-  
-	$A = <Q, Q_0, X, V, C, T>$
-	
-	C - множество стимулов (например, вызовов функций), $С_i$ – появление i-ой стимула
-	
-	$C_i^A$ - множество семантических действий, инициируемых запуском функции при условии истинности $C_i^{CondA}$
-	
-	$C_i^D$ - множество дочерних автоматов, запускаемых функцией при условии $C_i^{CondD}$;
   \end{mybox}
 \end{frame}
 }
@@ -212,11 +176,11 @@
 {
 \usebackgroundtemplate{%
 \tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{links.jpg}};}
-\begin{frame}[fragile]{Извлечение информации из кода}
+\begin{frame}{Извлечение информации из кода}
   \begin{mybox}[]
   \begin{itemize}
   	\item Статический анализ: используя одно из подходящий представлений программы (CFG, SSA, Def-Use chains), попытаться отобразить порядок действий на модель
-  	\item Проблема - иногда нужно знать, какое значение хранится в переменной. Статический анализ не всегда может дать ответ.
+  	\item Проблема - иногда нужно знать, какое значение хранится в переменной. Статический анализ не всегда может дать ответ на этот вопрос
   \end{itemize}
   \end{mybox}
 \end{frame}
@@ -225,11 +189,11 @@
 {
 \usebackgroundtemplate{%
 \tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{links.jpg}};}
-\begin{frame}[fragile]{Извлечение информации из кода}
+\begin{frame}{Извлечение информации из кода}
 	\begin{mybox}[]
 		\begin{itemize}
 			\item Динамический анализ: программа инструментируется, на основе трассы выполнения составляется путь в модели
-			\item Для инструментирования используется AOP (аспекты) в реализации AspectJ
+			\item Для инструментирования используется AOP (Aspects) в реализации AspectJ
 			\item Преимущества: проще в реализации, выше точность
 			\item Бонус: проверка корректности использования исходной библиотеки
 		\end{itemize}
@@ -240,9 +204,9 @@
 {
 \usebackgroundtemplate{%
 \tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{chain.jpg}};}
-\begin{frame}[fragile]{Поиск соответствия между моделями}
+\begin{frame}{Поиск соответствия между моделями}
   \begin{mybox}[]
-  	\item При переносе необходимо сохранить:
+  	При переносе необходимо сохранить:
   	  \begin{itemize}
   	  	\item Набор действий, совершенных над библиотекой
   	  	\item Зависимости по данным
@@ -254,11 +218,11 @@
 {
 \usebackgroundtemplate{%
 \tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{chain.jpg}};}
-\begin{frame}[fragile]{Поиск соответствия между моделями}
+\begin{frame}{Поиск соответствия между моделями}
   \begin{mybox}[]
   \begin{itemize}
   	\item Модель переводится в граф и задача сводится к поиску кратчайшего пути на графе
-  	\item Первые версии инструмента: использовался алгоритм Дейкстры. Недостаток подхода: не все связи можно представить с помощью графа
+  	\item Первые версии инструмента использовали алгоритм Дейкстры. Недостаток подхода: не все условия можно передать с помощью связей в графе
   	\item Сейчас: используется модификация волнового алгоритма
   	\item В поисках более оптимального подхода
   \end{itemize}
@@ -269,12 +233,12 @@
 {
 \usebackgroundtemplate{%
 \tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{chain.jpg}};}
-\begin{frame}[fragile]{Поиск соответствия между моделями}
+\begin{frame}{Поиск соответствия между моделями}
   \begin{mybox}[]
   Зависимости по данным:
   \begin{itemize}
     \item Сущности, которые необходимы для осуществления перехода (например, аргументы функции), отмечены в модели специальными связями
-  	\item Если для перехода требуется сущность, которая отсутствует в текущем контексте, ищем способ создания этой сущности
+  	\item Если для перехода требуется сущность, которая отсутствует в текущем контексте, ищется способ создания этой сущности
   \end{itemize}
   \end{mybox}
 \end{frame}
@@ -282,12 +246,26 @@
 
 {
 \usebackgroundtemplate{%
+\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{chain.jpg}};}
+\begin{frame}{Применение изменений к коду}
+	\begin{mybox}[]
+  \begin{itemize}
+  	\item Для получения AST используется библиотека JavaParser
+  	\item Поддерживается синтаксис Java 8
+  	\item Измененный код компилируется и запускается
+  \end{itemize}
+\end{mybox}
+\end{frame}
+}
+
+{
+\usebackgroundtemplate{%
 \tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{todolist.jpg}};}
-\begin{frame}[fragile]{Текущее состояние}
+\begin{frame}{Текущее состояние}
   \begin{mybox}[]
   \begin{itemize}
-  	\item Модель библиотеки, где можно описать состояния, связи и прототипы функций.
-  	\item Описание моделей с помощью DSL на Kotlin
+  	\item Формализм для описания библиотек, с помощью которого можно описать состояния, связи и прототипы функций.
+  	\item DSL на Kotlin для описания моделей
   	\item Инструмент для миграции программ на языке Java
   	\item Система проверки корректности преобразования
   \end{itemize}
@@ -329,7 +307,7 @@ if (linkedEdge_ContentLength_1 > 0) {
 {
 \usebackgroundtemplate{%
 \tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{todolist.jpg}};}
-\begin{frame}[fragile]{Дальнейшее развитие}
+\begin{frame}{Дальнейшее развитие}
 	\begin{mybox}[]
 	\begin{itemize}
 		\item Улучшение алгоритма поиска соответствия, повышение производительности + увеличение возможностей
@@ -340,5 +318,11 @@ if (linkedEdge_ContentLength_1 > 0) {
 	\end{mybox}
 \end{frame}
 }
+
+\begin{frame}{Контакты}
+	Email: aleksyuk@kspt.icc.spbstu.ru
+	
+	Github: \url{https://github.com/h31/LibraryMigration}
+\end{frame}
 
 \end{document}
