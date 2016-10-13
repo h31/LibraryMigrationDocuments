@@ -56,10 +56,10 @@
 
 \maketitle
 
-\begin{frame}{Table of contents}
-  \setbeamertemplate{section in toc}[sections numbered]
-  \tableofcontents[hideallsubsections]
-\end{frame}
+%\begin{frame}{Table of contents}
+%  \setbeamertemplate{section in toc}[sections numbered]
+%  \tableofcontents[hideallsubsections]
+%\end{frame}
 
 % \section{Introduction}
 
@@ -85,8 +85,8 @@
 \begin{frame}{Сложности}
 \begin{mybox}[]
 \begin{itemize}
-	\item Можно перенести вручную
-	\item Много рутинной работы
+	\item Практически всегда миграция идет вручную
+	\item Много рутинной работы $\Longrightarrow$ высокая вероятность допустить ошибку
 	\item Попробовать автоматизировать?
 \end{itemize}
 \end{mybox}
@@ -96,19 +96,39 @@
 {
 \usebackgroundtemplate{%
 \tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{plan.jpg}};}
-\begin{frame}{Общий план решения задачи}
+\begin{frame}{Общий подход к решению задачи}
 \begin{mybox}[]
 \begin{itemize}
 	\item Создать модели используемых библиотек
 	\item Модель - частная спецификация, описывающая внешнее поведение библиотеки
-	\item Найти соответствие между двумя моделями
+	\item Проанализировать модели, найти 
 	\item Преобразовать изменения обратно в код
 \end{itemize}
 \end{mybox}
 
 \metroset{block=fill}
 \begin{alertblock}{Почему модели, а не сам код?}
-Не тьюринг-полные модели проще анализировать
+Декларативные модели проще анализировать, чем императивный код
+\end{alertblock}
+\end{frame}
+}
+
+{
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{plan.jpg}};}
+\begin{frame}{Спецификация библиотек}
+\begin{mybox}[]
+\begin{itemize}
+	\item Детально описывать внешний интерфейс библиотеки;
+	\item Задавать возможные протоколы использования библиотеки;
+	\item Специфицировать побочные действия библиотеки – влияние ее на окружение;
+	\item Явно вводить семантические описания поведения библиотек.
+\end{itemize}
+\end{mybox}
+
+\metroset{block=fill}
+\begin{alertblock}{Почему модели, а не сам код?}
+Декларативные модели проще анализировать, чем императивный код
 \end{alertblock}
 \end{frame}
 }
