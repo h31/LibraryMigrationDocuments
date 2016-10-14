@@ -7,7 +7,9 @@
 \usepackage{appendixnumberbeamer}
 
 \usepackage{booktabs}
+\usepackage{minted}
 \usepackage[many]{tcolorbox}
+\usepackage{mdframed}
 
 \usepackage{listings}
 \lstset{basicstyle=\ttfamily\small,
@@ -16,19 +18,24 @@
 	frame=lrtb,
 	% numbers=left,
 	extendedchars=\true,
-	language=bash
+	language=Java
 }
+
+\usepackage{xcolor}
 
 \usepackage{xspace}
 \newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
 % \setsansfont{Fira Sans Bold}
 
+% \surroundwithmdframed{minted}
+
 \title{Автоматизация миграции программного кода на новый набор библиотек}
 % \subtitle{A modern beamer theme}
 \date{\today}
 \author{Артем Алексюк}
-\institute{Санкт-Петербургский политехнический университет Петра Великого}
-% \titlegraphic{\hfill\includegraphics[height=1.5cm]{logo.pdf}}
+\institute{Санкт-Петербургский политехнический университет Петра Великого \\
+JetBrains Research}
+\titlegraphic{\hfill\includegraphics[height=1.5cm]{WIP.png}}
 
 \newtcolorbox{mybox}[1][]{
     width=\textwidth,
@@ -49,6 +56,8 @@
     opacityback=0.7
 }
 
+\setbeamercolor{itemize/enumerate body}{fg=black}
+
 % \setbeamertemplate{blocks}[rounded][shadow=false]
 % \addtobeamertemplate{block begin}{\pgfsetfillopacity{0.5}}{\pgfsetfillopacity{1}}
 
@@ -65,15 +74,16 @@
 
 
 {
-\usebackgroundtemplate{%
-\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{historical-archive.jpg}};}
+\usebackgroundtemplate{\includegraphics[height=\paperheight,width=\paperwidth]{historical-archive.jpg};}
 \begin{frame}{Актуальность}
 \begin{mybox}[]
-Миграция в новое библиотечное окружение?
+Миграция в новое библиотечное окружение:
 \begin{itemize}
 	\item Новая программная платформа
 	\item Новая аппаратная платформа
-	\item Унаследованный код, несовместимый с современными системами, средствами разработки, библиотеками
+	\item Новая версия библиотеки
+	\item Унаследованный (несовместимый) код 
+	\item ...		
 \end{itemize}
 \end{mybox}
 \end{frame}
@@ -81,84 +91,75 @@
 
 {
 \usebackgroundtemplate{%
-\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{miner2.jpg}};}
+\tikz\node[opacity=0.2]{\includegraphics[height=\paperheight,width=\paperwidth]{miner2.jpg}};}
 \begin{frame}{Сложности}
 \begin{mybox}[]
 \begin{itemize}
 	\item Практически всегда миграция идет вручную
-	\item Много рутинной работы $\Longrightarrow$ высокая вероятность допустить ошибку
-	\item Попробовать автоматизировать?
+	\item Много рутинной работы $\Longrightarrow$ высокая вероятность внесения ошибок
+	\item Однотипные действия при миграции нескольких проектов
 \end{itemize}
+\end{mybox}
+\vspace{0.5cm}
+\begin{mybox}[]
+\begin{center}
+    Требуется автоматизация
+\end{center}
 \end{mybox}
 \end{frame}
 }
 
-{
-\usebackgroundtemplate{%
-\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{plan.jpg}};}
+\begin{frame}[fragile]{Пример задачи миграции}
+	Программа, использующая использующая библиотеку java.net.URLConnection:
+\begin{minted}[breaklines,fontsize=\small]{java}
+URL url = new URL("http://api.ipify.org/");
+URLConnection conn = url.openConnection();
+\end{minted}
+	Программа, использующая использующая библиотеку Apache HTTP Client:
+\begin{minted}[breaklines,fontsize=\small]{java}
+CloseableHttpClient httpclient = HttpClients.createDefault();
+HttpGet httpget = new HttpGet("http://api.ipify.org/");
+CloseableHttpResponse httpResponse = httpclient.execute(httpget);
+\end{minted}
+\end{frame}
+
 \begin{frame}{Общий подход к решению задачи}
-\begin{mybox}[]
-\begin{itemize}
-	\item Создать модели используемых библиотек
-	\item Модель - частичная спецификация, описывающая внешнее поведение библиотеки
-	\item Проанализировать модели, рассчитать для них изменения
-	\item Преобразовать изменения обратно в код
-\end{itemize}
-\end{mybox}
-
-\metroset{block=fill}
-\begin{alertblock}{Почему модели, а не сам код?}
-Декларативные модели анализировать удобнее, чем императивный код
-\end{alertblock}
+\begin{center}
+\includegraphics[width=\textwidth]{img-0001.png}
+\end{center}
 \end{frame}
-}
+
+%{
+%\usebackgroundtemplate{%
+%\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
+%\begin{frame}{Модели библиотек}
+%\begin{mybox}[]
+%	Модель библиотеки должна:
+%\begin{itemize}
+%	\item Детально описывать внешний интерфейс библиотеки
+%	\item Задавать возможные протоколы использования библиотеки;
+%	\item Специфицировать побочные действия библиотеки – влияние ее на окружение;
+%\end{itemize}
+%\end{mybox}
+%\end{frame}
+%}
 
 {
-\usebackgroundtemplate{%
-\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
-\begin{frame}{Спецификация библиотек}
-\begin{mybox}[]
-	Уже есть языки для описания библиотек (например, IDL для RPC), но они не позволяют выразить семантическую информацию.
-	Модель библиотеки должна:
-\begin{itemize}
-	\item Детально описывать внешний интерфейс библиотеки
-	\item Задавать возможные протоколы использования библиотеки;
-	\item Специфицировать побочные действия библиотеки – влияние ее на окружение;
-\end{itemize}
-\end{mybox}
-\end{frame}
-}
-
-{
-\usebackgroundtemplate{%
-\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
-\begin{frame}{Формализм}
+\usebackgroundtemplate{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg};}
+\begin{frame}{Модель библиотеки}
   \begin{mybox}[]
-  Для описания моделей используется набор расширенных конечных автоматов:
+  Для описания моделей используется набор расширенных конечных автоматов
   \begin{itemize}
-  	\item $L$ – основной расширенный конечный автомат, описывающий поведение всей библиотеки
-  	\item $S_i$ – i-ый дочерний расширенный конечный автомат, запускаемый при достижении определенных условий
+  	\item Каждый переход в автомате - действие над библиотекой (вызов функции, конструктора и так далее)
+  	\item В процессе перехода могут порождаться новые автоматы
+  	\item Автомат может иметь атрибуты, и переходы могут зависеть от них (иметь условия перехода)
   \end{itemize}
-  \end{mybox}
-\end{frame}
-}
-
-{
-\usebackgroundtemplate{%
-\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{spec.jpg}};}
-\begin{frame}{Формализм}
-  \begin{mybox}[]
-  Дочерний конечный автомат:
+  \noindent\rule{4cm}{0.4pt}
   
-	$A = <Q, Q_0, X, V, C, T>$
-	
-	C - множество стимулов (например, вызовов функций), $C_i$ – появление i-ой стимула
-	
-	$X$ - набор атрибутов этого автомата
-	
-	$C_i^A$ - множество семантических действий, инициируемых запуском функции при условии истинности $C_i^{CondA}$
-	
-	$C_i^D$ - множество дочерних автоматов, описывающих сущности и их экземпляры (создаются при истинном $C_i^{CondD}$)
+  \begingroup
+  \tiny
+    	Ицыксон В.М. Формализм для спецификации семантики программных библиотек // Системная информатика. — 2016. — № 8. — С. 43-52.
+  \endgroup
   \end{mybox}
 \end{frame}
 }
@@ -166,37 +167,58 @@
 % \section{Titleformats}
 
 \begin{frame}{Пример автомата}
+\begin{center}
+	\includegraphics[width=0.7\textwidth]{javaSmall.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Фрагмент модели библиотеки URLConnection}
 	\includegraphics[width=\textwidth]{java.pdf}
 \end{frame}
 
-\begin{frame}{Пример автомата}
+\begin{frame}{Фрагмент модели библиотеки Apache HTTP Client}
+	\includegraphics[width=0.95\textwidth]{apache.pdf}
+\end{frame}
+
+\begin{frame}{Задействованные переходы в автоматах}
 	\includegraphics[width=\textwidth]{extracted_java.pdf}
 \end{frame}
 
+%{
+%\usebackgroundtemplate{%
+%\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{links.jpg}};}
+%\begin{frame}{Анализ портируемой программы}
+%  \begin{mybox}[]
+%  \begin{itemize}
+%  	\item Задача: Необходимо найти все участки портируемой программы, которые используют библиотеку, и найти соответствующие им переходы в автомате
+%  	\item Простейший вариант: получаем AST портируемой программы, ищем в нем все вызовы библиотечных методов и по имени метода выбираем переход в автомате
+%  	\item Проблема: не всегда, имея только AST, можно выбрать подходящий переход в автомате
+%  \end{itemize}
+%  \end{mybox}
+%\end{frame}
+%}
+
 {
-\usebackgroundtemplate{%
-\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{links.jpg}};}
-\begin{frame}{Извлечение информации из кода}
+\usebackgroundtemplate{\includegraphics[height=\paperheight,width=\paperwidth]{links.jpg};}
+\begin{frame}{Анализ портируемой программы}
   \begin{mybox}[]
   \begin{itemize}
-  	\item Статический анализ: используя одно из подходящий представлений программы (CFG, SSA, Def-Use chains), попытаться отобразить порядок действий на модель
-  	\item Проблема - иногда нужно знать, какое значение хранится в переменной. Статический анализ не всегда может дать ответ на этот вопрос
+  	\item Задача: необходимо связать вызовы API библиотеки в портируемой программе и переходы в автомате
+  	\item Простейший вариант решения: получаем AST портируемой программы, ищем в нем все вызовы библиотечных методов и по имени метода выбираем переход в автомате
+  	\item Проблема: некоторую информацию практически невозможно получить из исходного кода
   \end{itemize}
   \end{mybox}
 \end{frame}
 }
 
 {
-\usebackgroundtemplate{%
-\tikz\node[opacity=0.4]{\includegraphics[height=\paperheight,width=\paperwidth]{links.jpg}};}
-\begin{frame}{Извлечение информации из кода}
+\usebackgroundtemplate{\includegraphics[height=\paperheight,width=\paperwidth]{links.jpg};}
+\begin{frame}{Анализ портируемой программы}
 	\begin{mybox}[]
-		\begin{itemize}
-			\item Динамический анализ: программа инструментируется, на основе трассы выполнения составляется путь в модели
-			\item Для инструментирования используется AOP (Aspects) в реализации AspectJ
-			\item Преимущества: проще в реализации, выше точность
-			\item Бонус: проверка корректности использования исходной библиотеки
-		\end{itemize}
+	\begin{itemize}
+	\item В дополнение можно использовать динамический анализ: программа инструментируется, составляется трасса выполнения, в которой фиксируются значения аргументов.
+	\item Подразумевается, что у портируемой программа имеется достаточный(?) набор тестов
+	\end{itemize}
 	\end{mybox}
 \end{frame}
 }
@@ -204,27 +226,16 @@
 {
 \usebackgroundtemplate{%
 \tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{chain.jpg}};}
-\begin{frame}{Поиск соответствия между моделями}
-  \begin{mybox}[]
-  	При переносе необходимо сохранить:
-  	  \begin{itemize}
-  	  	\item Набор действий, совершенных над библиотекой
-  	  	\item Зависимости по данным
-  	  \end{itemize}
-  \end{mybox}
-\end{frame}
-}
-
-{
-\usebackgroundtemplate{%
-\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{chain.jpg}};}
-\begin{frame}{Поиск соответствия между моделями}
+\begin{frame}{Поиск соответствия между переходами}
   \begin{mybox}[]
   \begin{itemize}
-  	\item Модель переводится в граф и задача сводится к поиску кратчайшего пути на графе
-  	\item Первые версии инструмента использовали алгоритм Дейкстры. Недостаток подхода: не все условия можно передать с помощью связей в графе
-  	\item Сейчас: используется модификация волнового алгоритма
-  	\item В поисках более оптимального подхода
+  \item Задача: для каждого перехода в исходном автомате найти соответствующие им набор переходов в целевом автомате
+  \item Часто одному переходу в исходном автомате соответствуют несколько в целевом, и наоборот
+  \item Критерий соответствия между переходами:
+  \begin{itemize}
+ 	  	\item Выполняются те же побочные действия
+ 	  	\item Порождается тот же набор сущностей
+  \end{itemize}
   \end{itemize}
   \end{mybox}
 \end{frame}
@@ -233,63 +244,105 @@
 {
 \usebackgroundtemplate{%
 \tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{chain.jpg}};}
-\begin{frame}{Поиск соответствия между моделями}
+\begin{frame}{Поиск соответствия между переходами}
   \begin{mybox}[]
-  Зависимости по данным:
   \begin{itemize}
-    \item Сущности, которые необходимы для осуществления перехода (например, аргументы функции), отмечены в модели специальными связями
-  	\item Если для перехода требуется сущность, которая отсутствует в текущем контексте, ищется способ создания этой сущности
+   	\item Изначальный подход 
+   	\begin{itemize}
+   	\item модель переводится в граф и задача сводится к поиску пути на графе
+   	\item \textcolor{red}{-} не учитываются побочные действия и условия переходов
+   	\end{itemize}
+   	
+    \item Текущий подход: 
+    \begin{itemize}
+    \item из-за наличия условий, обычный граф не подходит
+    \item сеть автоматов сводится к динамическому графу 
+    \item используется модифицированный волновой алгоритм (учитывающий побочные действия)
+    \end{itemize}
+  \end{itemize}
+  \end{mybox}
+  \noindent\rule{4cm}{0.4pt}
+  \begin{mybox}[]
+  	???В поисках более эффективных подходов???
+  \end{mybox}
+  
+\end{frame}
+}
+
+%{
+%\usebackgroundtemplate{%
+%\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{chain.jpg}};}
+%\begin{frame}{Поиск соответствия между моделями}
+%  \begin{mybox}[]
+%  Зависимости по данным:
+%  \begin{itemize}
+%    \item Сущности, которые необходимы для осуществления перехода (например, аргументы функции), отмечены в модели специальными связями
+%  	\item Если для перехода требуется сущность, которая отсутствует в текущем контексте, ищется способ создания этой сущности
+%  \end{itemize}
+%  \end{mybox}
+%\end{frame}
+%}
+
+%{
+%\usebackgroundtemplate{%
+%\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{chain.jpg}};}
+%\begin{frame}{Применение изменений к коду}
+%	\begin{mybox}[]
+%  \begin{itemize}
+%  	\item Для получения AST используется библиотека JavaParser
+%  	\item Поддерживается синтаксис Java 8
+%  	\item Измененный код компилируется и запускается
+%  \end{itemize}
+%\end{mybox}
+%\end{frame}
+%}
+
+{
+\usebackgroundtemplate{\includegraphics[height=\paperheight,width=\paperwidth]{todolist.jpg};}
+\begin{frame}{Прототип инструмента}
+  \begin{mybox}[]
+  Рассмотренные идеи реализуются в прототипе инструмента миграции для языка Java:
+  \begin{itemize}
+  	\item сформирован DSL на Kotlin для описания моделей библиотек
+  	\item реализовано получение трассы выполнения мигрируемой программы (с использованием AOP)
+  	\item производится портирование простых искусственных программ
+  	\item создается система проверки корректности преобразования
   \end{itemize}
   \end{mybox}
 \end{frame}
 }
 
-{
-\usebackgroundtemplate{%
-\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{chain.jpg}};}
-\begin{frame}{Применение изменений к коду}
-	\begin{mybox}[]
-  \begin{itemize}
-  	\item Для получения AST используется библиотека JavaParser
-  	\item Поддерживается синтаксис Java 8
-  	\item Измененный код компилируется и запускается
-  \end{itemize}
-\end{mybox}
+\begin{frame}[fragile]{Фрагмент DSL-описания модели библиотеки}
+\begin{minted}[breaklines,fontsize=\scriptsize]{kotlin}
+val url = StateMachine(entity = HTTPEntities.url)
+val request = StateMachine(entity = HTTPEntities.request)
+val hasURL = State(name = "hasURL", machine = request)
+ConstructorEdge(
+     machine = request,
+     src = request.getDefaultState(),
+     dst = hasURL,
+     param = listOf(Param(machine = url))
+)
+\end{minted}
 \end{frame}
-}
 
-{
-\usebackgroundtemplate{%
-\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{todolist.jpg}};}
-\begin{frame}{Текущее состояние}
-  \begin{mybox}[]
-  \begin{itemize}
-  	\item Формализм для описания библиотек, с помощью которого можно описать состояния, связи и прототипы функций.
-  	\item DSL на Kotlin для описания моделей
-  	\item Инструмент для миграции программ на языке Java
-  	\item Система проверки корректности преобразования
-  \end{itemize}
-  \end{mybox}
-\end{frame}
-}
+\begin{frame}[fragile]{Пример миграции. Программа <<До>>}
 
-\begin{frame}[fragile]{Пример миграции}
-До:
-\begin{lstlisting}
+\begin{minted}[breaklines,fontsize=\footnotesize]{java}
 URL url = new URL("http://api.ipify.org/");
 URLConnection conn = url.openConnection();
 if (conn.getContentLengthLong() > 0) {
-    String response = new BufferedReader(new InputStreamReader(conn.getInputStream())).lines().collect(Collectors.joining("\n"));
+    String response = new BufferedReader(new InputStreamReader(conn.getInputStream()))
+    .lines().collect(Collectors.joining("\n"));
     System.out.println(response);
 } else {
     System.out.println("Error!");
 }
-\end{lstlisting}
+\end{minted}
 \end{frame}
 
-\begin{frame}[fragile]{Пример миграции}
-После:
-\begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+\begin{frame}[fragile]{Результат миграции. Программа <<После>>}
+\begin{minted}[breaklines,fontsize=\scriptsize]{java}
 HttpGet url = new HttpGet("http://api.ipify.org/");
 CloseableHttpClient newMachine_Client_0 = HttpClients.createDefault();
 CloseableHttpResponse conn = newMachine_Client_0.execute(url);
@@ -301,19 +354,42 @@ if (linkedEdge_ContentLength_1 > 0) {
 } else {
     System.out.println("Error!");
 }
-\end{lstlisting}
+\end{minted}
 \end{frame}
 
 {
-\usebackgroundtemplate{%
-\tikz\node[opacity=0.3]{\includegraphics[height=\paperheight,width=\paperwidth]{todolist.jpg}};}
-\begin{frame}{Дальнейшее развитие}
+\usebackgroundtemplate{\includegraphics[height=\paperheight,width=\paperwidth]{todolist.jpg};}
+\begin{frame}{Дальнейшее развитие подхода}
+	\begin{mybox}[]
+	\begin{itemize}	
+		\item Развитие метода поиска соответствия между автоматами
+		\item Разработка метода сопоставления побочных действий
+		\item TBD 1 * 
+		\item TBD 2 * 
+		\item ...
+		\item TBD n * 
+	\end{itemize}
+	
+	  \noindent\rule{4cm}{0.4pt}
+	  
+	  \begingroup
+	  \tiny
+	    	* В процессе обсуждения
+	  \endgroup
+	\end{mybox}
+\end{frame}
+}
+
+{
+\usebackgroundtemplate{\includegraphics[height=\paperheight,width=\paperwidth]{todolist.jpg};}
+\begin{frame}{Дальнейшее развитие прототипа инструмента}
 	\begin{mybox}[]
 	\begin{itemize}
-		\item Улучшение алгоритма поиска соответствия, повышение производительности + увеличение возможностей
 		\item Проектирование языка для описания моделей (сейчас это ad-hoc решение)
-		\item Поиск способа задания соответствия между семантическими доменами
-		\item Увеличение количества информации, содержащейся в моделях
+		\item Расширение поддержки модели в прототипе
+		\item (Cущественное) пополнение репозитория моделей библиотек
+		\item Создание репозитория тестовых программ для миграции
+		\item Тестирование инструмента на реальных проектах
 	\end{itemize}
 	\end{mybox}
 \end{frame}

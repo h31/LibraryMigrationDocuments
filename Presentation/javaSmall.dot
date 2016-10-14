@@ -1,0 +1,16 @@
+digraph G {
+    bgcolor="transparent";
+
+    subgraph cluster0 {
+    label = <<B>Request: URL</B>>;
+    Constructed_Request [ label="Constructed" ];
+    hasURL_Request [ label="hasURL" ];
+    virtual0 [ shape = point ];
+
+    Constructed_Request -> hasURL_Request [ label="new Request: URL(URL: String)", style = "bold"  ];
+    hasURL_Request -> virtual0 [ style = "bold" label="openConnection()"  ];
+    virtual0 -> hasURL_Request [ style = "bold"  ];
+    }
+    virtual0 -> Constructed_Connection [ label="return URLConnection()"  ];
+    Constructed_Connection [style=invisible];
+}
