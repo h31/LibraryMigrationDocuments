@@ -7,10 +7,10 @@ digraph G {
     hasURL_Request [ label="hasURL" ];
     virtual0 [ shape = point ];
 
-    Constructed_Request -> hasURL_Request [ label="new Request: URL(URL: String)", style = "bold"  ];
+    Constructed_Request -> hasURL_Request [ label="new Request(URL: String)", style = "bold"  ];
     hasURL_Request -> virtual0 [ style = "bold" label="openConnection()"  ];
     virtual0 -> hasURL_Request [ style = "bold"  ];
     }
-    virtual0 -> Constructed_Connection [ label="return URLConnection()"  ];
+    virtual0 -> Constructed_Connection [ label="return Connection"  ];
     Constructed_Connection [style=invisible];
 }
