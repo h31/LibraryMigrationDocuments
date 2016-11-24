@@ -1,7 +1,7 @@
 \documentclass[a4paper, 14pt]{extarticle}
-% \usepackage{cmap}
-\usepackage[T1,T2A]{fontenc}
-\usepackage[utf8]{inputenc}
+\usepackage{cmap}
+%\usepackage[T1,T2A]{fontenc}
+%\usepackage[utf8]{inputenc}
 \usepackage{mathtext}
 %\DeclareSymbolFont{T2Aletters}{T2A}{cmr}{m}{it}
 \usepackage{amsmath}
@@ -11,7 +11,7 @@
 \usepackage{multicol}
 \usepackage{misccorr}
 \usepackage{longtable}
-\usepackage{tabu}
+\usepackage{tabularx}
 \usepackage{flafter}
 \usepackage{subfig}
 \usepackage{float}
@@ -35,12 +35,22 @@
 \setmonofont{Arial}
 \usepackage[left=1.8cm, right=1cm, top=0.8cm, bottom=2cm, bindingoffset=0cm]{geometry}
 
-\DeclareSymbolFont{T2Aletters}{T2A}{cmr}{m}{it}
+% \DeclareSymbolFont{T2Aletters}{T2A}{cmr}{m}{it}
 %\pagestyle{empty}
+
+\newcommand{\mychapter}[2]{
+    \setcounter{section}{#1}
+    \setcounter{subsection}{0}
+    \section*{#2}
+    \addcontentsline{toc}{section}{#2}
+}
 
 \begin{document}
 
 \input{titlepage.tex}
 \input{main.tex}
+
+\bibliography{report}
+\bibliographystyle{ugost2008}
 
 \end{document}
