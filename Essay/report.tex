@@ -38,19 +38,13 @@
 % \DeclareSymbolFont{T2Aletters}{T2A}{cmr}{m}{it}
 %\pagestyle{empty}
 
-\newcommand{\mychapter}[2]{
-    \setcounter{section}{#1}
-    \setcounter{subsection}{0}
-    \section*{#2}
-    \addcontentsline{toc}{section}{#2}
-}
-
 \begin{document}
 
 \input{titlepage.tex}
 \input{main.tex}
 
-\bibliography{report}
+\addcontentsline{toc}{section}{Список литературы}
 \bibliographystyle{ugost2008}
+\bibliography{report}
 
 \end{document}
